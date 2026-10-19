@@ -24,6 +24,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -51,6 +55,30 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun ArtSpaceLayout(modifier: Modifier = Modifier) {
+    // State: ID of the current artwork (1, 2 or 3)
+    var currentArtwork by remember { mutableStateOf(1) }
+
+    val imageRes = when (currentArtwork) {
+        1 -> R.drawable.art1
+        2 -> R.drawable.art2
+        else -> R.drawable.art3
+    }
+    val title = when (currentArtwork) {
+        1 -> R.string.art1_title
+        2 -> R.string.art2_title
+        else -> R.string.art3_title
+    }
+    val artist = when (currentArtwork) {
+        1 -> R.string.art1_artist
+        2 -> R.string.art2_artist
+        else -> R.string.art3_artist
+    }
+    val year = when (currentArtwork) {
+        1 -> R.string.art1_year
+        2 -> R.string.art2_year
+        else -> R.string.art3_year
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -60,15 +88,26 @@ fun ArtSpaceLayout(modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        ArtworkWall(imageRes = R.drawable.art1, contentDescription = R.string.art1_title)
+        ArtworkWall(imageRes = imageRes, contentDescription = title)
         Spacer(modifier = Modifier.height(24.dp))
-        ArtworkDescriptor(
-            title = R.string.art1_title,
-            artist = R.string.art1_artist,
-            year = R.string.art1_year
+        ArtworkDescriptor(title = title, artist = artist, year = year)
+        Spacer(modifier = Modifier.height(24.dp))
+        DisplayController(
+            onPreviousClick = {
+                currentArtwork = when (currentArtwork) {
+                    1 -> 3
+                    2 -> 1
+                    else -> 2
+                }
+            },
+            onNextClick = {
+                currentArtwork = when (currentArtwork) {
+                    1 -> 2
+                    2 -> 3
+                    else -> 1
+                }
+            }
         )
-        Spacer(modifier = Modifier.height(24.dp))
-        DisplayController(onPreviousClick = {}, onNextClick = {})
     }
 }
 
